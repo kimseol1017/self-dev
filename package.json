@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx ts-node src/server.ts",
-    "build": "npx tsc",
+    "build": "tsc",
     "dev": "npx ts-node src/server.ts"
   },
   "keywords": [],
