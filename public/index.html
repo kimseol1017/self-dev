@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SELF — 자기계발 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ── Reset & Tokens ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080a;
+  --bg1:#0c0d10;
+  --bg2:#111318;
+  --bg3:#181b21;
+  --bg4:#1e222a;
+  --line:rgba(255,255,255,0.08);
+  --line2:rgba(255,255,255,0.14);
+  --txt:#f0f2f7;
+  --txt2:#adb3c4;
+  --txt3:#6b7282;
+  --cyan:#4ef0d0;
+  --cyan-dim:rgba(78,240,208,0.08);
+  --cyan-glow:rgba(78,240,208,0.15);
+  --blue:#4e8ef0;
+  --blue-dim:rgba(78,142,240,0.08);
+  --amber:#f0c44e;
+  --amber-dim:rgba(240,196,78,0.08);
+  --red:#f05a4e;
+  --green:#4ef07a;
+  --ff-display:'Syne',sans-serif;
+  --ff-body:'Outfit',sans-serif;
+  --r:6px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:var(--ff-body);font-size:15px;font-weight:400;line-height:1.65;overflow-x:hidden;min-height:100vh}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+
+/* ── Layout ── */
+.shell{max-width:1120px;margin:0 auto;padding:40px 28px 80px}
+
+/* ── Top Bar ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.logo{font-family:var(--ff-display);font-weight:800;font-size:18px;letter-spacing:-0.03em;color:var(--txt)}
+.logo span{color:var(--cyan)}
+.clock-block{text-align:right}
+.clock-date{font-family:var(--ff-display);font-size:11px;font-weight:600;letter-spacing:0.12em;color:var(--txt3);text-transform:uppercase;margin-bottom:4px}
+.clock-time{font-family:var(--ff-display);font-size:36px;font-weight:700;letter-spacing:-0.04em;color:var(--txt);line-height:1;font-variant-numeric:tabular-nums}
+.clock-day{font-size:11px;color:var(--txt3);margin-top:4px;letter-spacing:0.08em}
+
+/* ── Grid ── */
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.col-5{grid-column:span 5}
+.col-7{grid-column:span 7}
+.col-6{grid-column:span 6}
+.col-12{grid-column:span 12}
+@media(max-width:900px){.col-5,.col-7,.col-6{grid-column:span 12}}
+
+/* ── Card ── */
+.card{background:var(--bg1);border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative;overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:var(--line2)}
+.card-tag{font-family:var(--ff-display);font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--txt3);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.card-tag::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* corner accent */
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--cyan) 0%,transparent 60%);opacity:0;transition:opacity .3s}
+.card:hover::before{opacity:1}
+
+/* ── Message ── */
+.msg-textarea{width:100%;background:transparent;border:none;color:var(--txt);font-family:var(--ff-body);font-size:16px;font-weight:400;line-height:1.8;resize:none;outline:none;min-height:120px;caret-color:var(--cyan)}
+.msg-textarea::placeholder{color:var(--txt3)}
+.msg-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.msg-status{font-size:11px;color:var(--txt3);opacity:0;transition:opacity .4s;font-family:var(--ff-display);letter-spacing:0.1em}
+.msg-status.on{opacity:1;color:var(--green)}
+.msg-actions{display:flex;gap:8px}
+
+/* ── Btn ── */
+.btn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line2);color:var(--txt2);font-family:var(--ff-display);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:8px 16px;border-radius:4px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim)}
+.btn-cyan{background:var(--cyan-dim);border-color:var(--cyan);color:var(--cyan)}
+.btn-cyan:hover{background:rgba(78,240,208,0.15)}
+.btn-ghost{border-color:transparent;color:var(--txt3)}
+.btn-ghost:hover{border-color:var(--line2);color:var(--txt2);background:transparent}
+.btn-sm{padding:5px 11px;font-size:9px}
+.btn-danger{border-color:transparent;color:var(--txt3)}
+.btn-danger:hover{border-color:var(--red);color:var(--red);background:rgba(240,90,78,0.08)}
+
+/* ── History Drawer ── */
+.history-toggle{margin-top:16px}
+.history-panel{margin-top:14px;display:none}
+.history-panel.open{display:block}
+.history-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.date-chip{font-family:var(--ff-display);font-size:10px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid var(--line);color:var(--txt3);cursor:pointer;transition:all .15s;white-space:nowrap}
+.date-chip:hover,.date-chip.active{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim)}
+.history-list{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;padding-right:4px}
+.history-item{background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;transition:border-color .15s}
+.history-item:hover{border-color:var(--line2)}
+.history-meta{flex-shrink:0;text-align:right}
+.history-time{font-family:var(--ff-display);font-size:9px;color:var(--txt3);letter-spacing:0.08em}
+.history-date-label{font-family:var(--ff-display);font-size:9px;font-weight:600;color:var(--cyan);letter-spacing:0.1em;margin-bottom:2px}
+.history-text{flex:1;font-size:14px;color:var(--txt2);line-height:1.65;word-break:break-word}
+.history-empty{text-align:center;padding:32px;color:var(--txt3);font-size:13px}
+
+/* ── Todos ── */
+.todo-input-row{display:flex;gap:8px;margin-bottom:16px}
+.input{flex:1;background:var(--bg3);border:1px solid var(--line);color:var(--txt);font-family:var(--ff-body);font-size:13px;padding:9px 14px;border-radius:4px;outline:none;transition:border-color .15s}
+.input:focus{border-color:var(--cyan)}
+.input::placeholder{color:var(--txt3)}
+.todo-list{display:flex;flex-direction:column;gap:2px;max-height:300px;overflow-y:auto}
+.todo-item{display:flex;align-items:flex-start;gap:10px;padding:10px 8px;border-radius:4px;transition:background .15s;cursor:default}
+.todo-item:hover{background:var(--bg2)}
+.todo-check{width:16px;height:16px;border:1.5px solid var(--txt3);border-radius:3px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.todo-check:hover{border-color:var(--cyan)}
+.todo-check.done{background:var(--cyan);border-color:var(--cyan)}
+.todo-check.done::after{content:'';display:block;width:9px;height:5px;border-left:2px solid var(--bg);border-bottom:2px solid var(--bg);transform:rotate(-45deg) translateY(-1px)}
+.todo-text{flex:1;font-size:14px;color:var(--txt);line-height:1.5;padding-top:1px}
+.todo-item.done .todo-text{color:var(--txt3);text-decoration:line-through}
+.todo-del{opacity:0;background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0 4px;line-height:1;transition:opacity .15s;flex-shrink:0;margin-top:1px}
+.todo-item:hover .todo-del{opacity:0.6}
+.todo-item:hover .todo-del:hover{opacity:1}
+.todo-stats{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.stat-txt{font-family:var(--ff-display);font-size:10px;color:var(--txt3);white-space:nowrap;font-weight:500}
+.progress{flex:1;height:2px;background:var(--bg4);border-radius:1px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:1px;transition:width .4s ease}
+.todo-empty{padding:28px 0;text-align:center;color:var(--txt3);font-size:13px}
+
+/* ── Quote ── */
+.quote-wrap{min-height:90px}
+.quote-text{font-size:17px;font-weight:400;line-height:1.8;color:var(--txt);font-style:italic}
+.quote-hl{color:var(--cyan)}
+.quote-attrib{margin-top:16px;display:flex;justify-content:space-between;align-items:flex-end;padding-top:14px;border-top:1px solid var(--line)}
+.quote-author{font-family:var(--ff-display);font-size:11px;font-weight:700;color:var(--txt2);letter-spacing:0.1em;text-transform:uppercase}
+.quote-role{font-family:var(--ff-display);font-size:9px;color:var(--txt3);margin-top:2px;letter-spacing:0.08em}
+.quote-src{font-size:10px;color:var(--txt3);text-align:right;max-width:140px;font-style:italic}
+.quote-actions{margin-top:12px;display:flex;justify-content:flex-end}
+
+/* ── Claude Recs ── */
+.rec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+@media(max-width:700px){.rec-grid{grid-template-columns:1fr}}
+.rec-card{background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:16px;transition:all .2s;cursor:default}
+.rec-card:hover{border-color:var(--line2);transform:translateY(-2px)}
+.rec-emoji{font-size:22px;margin-bottom:10px;display:block;line-height:1}
+.rec-title{font-family:var(--ff-display);font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);margin-bottom:7px}
+.rec-body{font-size:13px;color:var(--txt2);line-height:1.7}
+.rec-footer{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.rec-ts{font-family:var(--ff-display);font-size:9px;color:var(--txt3);letter-spacing:0.08em}
+
+/* ── Loading ── */
+.loader{display:flex;align-items:center;gap:8px;padding:12px 0;color:var(--txt3);font-family:var(--ff-display);font-size:10px;letter-spacing:0.12em;text-transform:uppercase}
+.dots{display:flex;gap:5px}
+.dot{width:5px;height:5px;background:var(--cyan);border-radius:50%;animation:blink 1.4s ease infinite;opacity:.3}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+/* ── Fade ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeUp .4s ease forwards}
+.card{animation:fadeUp .4s ease both}
+.card:nth-child(1){animation-delay:.04s}
+.card:nth-child(2){animation-delay:.08s}
+.card:nth-child(3){animation-delay:.12s}
+.card:nth-child(4){animation-delay:.16s}
+
+/* ── Badge ── */
+.badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:var(--cyan-dim);border-radius:50%;font-family:var(--ff-display);font-size:9px;font-weight:700;color:var(--cyan);margin-left:6px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="logo">SELF<span>.</span></div>
+    <div class="clock-block">
+      <div class="clock-date" id="c-date"></div>
+      <div class="clock-time" id="c-time"></div>
+      <div class="clock-day" id="c-day"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- COL LEFT (message + history) -->
+    <div class="col-5" style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- 나에게 한마디 -->
+      <div class="card">
+        <div class="card-tag">나에게 한마디</div>
+        <textarea class="msg-textarea" id="msg-input" rows="5"
+          placeholder="지금 이 순간, 나에게 전하고 싶은 말..."></textarea>
+        <div class="msg-row">
+          <span class="msg-status" id="msg-status">저장됨 ✓</span>
+          <div class="msg-actions">
+            <button class="btn btn-ghost btn-sm" onclick="draftMessage()">임시저장</button>
+            <button class="btn btn-cyan btn-sm" onclick="saveMessage()">기록에 저장</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 메시지 히스토리 -->
+      <div class="card">
+        <div class="card-tag">
+          나의 기록
+          <span id="history-count-badge"></span>
+        </div>
+        <div id="history-filters" class="history-filters"></div>
+        <div class="history-list" id="history-list">
+          <div class="history-empty">저장된 기록이 없습니다.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COL RIGHT (todos) -->
+    <div class="col-7">
+      <div class="card" style="height:100%">
+        <div class="card-tag">오늘의 할 일</div>
+        <div class="todo-input-row">
+          <input class="input" id="todo-input" type="text"
+            placeholder="할 일을 입력하세요" onkeydown="if(event.key==='Enter')addTodo()"/>
+          <button class="btn btn-cyan" onclick="addTodo()">추가</button>
+        </div>
+        <ul class="todo-list" id="todo-list"></ul>
+        <div class="todo-stats">
+          <span class="stat-txt" id="todo-stat">0 / 0</span>
+          <div class="progress"><div class="progress-fill" id="todo-progress" style="width:0%"></div></div>
+          <span class="stat-txt" id="todo-pct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUOTE -->
+    <div class="col-6">
+      <div class="card">
+        <div class="card-tag">오늘의 영감</div>
+        <div id="quote-wrap" class="quote-wrap">
+          <div class="loader"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>불러오는 중</div>
+        </div>
+        <div class="quote-actions">
+          <button class="btn btn-ghost btn-sm" onclick="loadQuote()">↺ 새 명언</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLAUDE RECS -->
+    <div class="col-6">
+      <div class="card">
+        <div class="card-tag">Claude 오늘의 추천</div>
+        <div id="rec-wrap">
+          <div class="loader"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>생성 중</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+//
+// ■ 명언 (오늘의 영감)
+//   → korean-advice-open-api 사용 — API 키 불필요
+//   → GET https://korean-advice-open-api.vercel.app/api/advice
+//   → 응답: { message: string, author: string }
+//
+// ■ Claude 추천 요소 (Anthropic API)
+//   claude.ai 환경 : API 키 자동 적용, 별도 설정 불필요
+//   로컬 환경      : 아래 ANTHROPIC_API_KEY 에 키를 직접 입력
+//                   키 발급 → https://console.anthropic.com
+//
+const ANTHROPIC_API_KEY = 'YOUR_API_KEY_HERE';
+
+const API_BASE = 'http://localhost:3000/api';
+const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
+
+// ── Anthropic API 헤더 (Claude 추천 요소 전용)
+// 로컬 브라우저 직접 호출 시 아래 3개 헤더가 모두 필요합니다.
+function anthropicHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'x-api-key': ANTHROPIC_API_KEY,                          // API 인증 키
+    'anthropic-version': '2023-06-01',                       // API 버전
+    'anthropic-dangerous-direct-browser-access': 'true'      // 브라우저 직접 호출 허용
+  };
+}
+
+async function claudeCall(prompt) {
+  const res = await fetch(ANTHROPIC_URL, {
+    method: 'POST',
+    headers: anthropicHeaders(),
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.content.map(i => i.text || '').join('').replace(/```json|```/g, '').trim();
+}
+
+// ══════════════════════════════════════════
+// CLOCK
+// ══════════════════════════════════════════
+const DAYS = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+function tick() {
+  const n = new Date();
+  const hh = String(n.getHours()).padStart(2,'0');
+  const mm = String(n.getMinutes()).padStart(2,'0');
+  const ss = String(n.getSeconds()).padStart(2,'0');
+  document.getElementById('c-time').textContent = `${hh}:${mm}:${ss}`;
+  document.getElementById('c-date').textContent =
+    `${n.getFullYear()} · ${MONTHS[n.getMonth()]} · ${String(n.getDate()).padStart(2,'0')}`;
+  document.getElementById('c-day').textContent = DAYS[n.getDay()];
+}
+tick(); setInterval(tick, 1000);
+
+// ══════════════════════════════════════════
+// LOAD DATA
+// ══════════════════════════════════════════
+async function loadData() {
+  try {
+    const r = await fetch(`${API_BASE}/data`);
+    const d = await r.json();
+    document.getElementById('msg-input').value = d.currentMessage || '';
+    renderTodos(d.todos || []);
+  } catch { /* 서버 없으면 빈 상태로 시작 */ }
+  await loadHistory();
+}
+
+// ══════════════════════════════════════════
+// MESSAGE
+// ══════════════════════════════════════════
+let draftTimer = null;
+document.getElementById('msg-input').addEventListener('input', () => {
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(draftMessage, 3000); // 3초 후 자동 임시저장
+});
+
+async function draftMessage() {
+  const text = document.getElementById('msg-input').value;
+  try {
+    await fetch(`${API_BASE}/message/draft`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    flash('msg-status', '임시저장됨 ✓');
+  } catch {}
+}
+
+async function saveMessage() {
+  const text = document.getElementById('msg-input').value.trim();
+  if (!text) return;
+  try {
+    await fetch(`${API_BASE}/message/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    flash('msg-status', '기록에 저장됨 ✓');
+    document.getElementById('msg-input').value = '';
+    await loadHistory();
+  } catch {
+    flash('msg-status', '저장 실패');
+  }
+}
+
+function flash(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add('on');
+  setTimeout(() => el.classList.remove('on'), 2500);
+}
+
+// ══════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════
+let allMessages = [];
+let activeDate = null;
+
+async function loadHistory() {
+  try {
+    const r = await fetch(`${API_BASE}/messages`);
+    allMessages = await r.json();
+  } catch { allMessages = []; }
+  renderHistory();
+}
+
+function renderHistory() {
+  const badge = document.getElementById('history-count-badge');
+  badge.innerHTML = allMessages.length
+    ? `<span class="badge">${allMessages.length}</span>` : '';
+
+  // 날짜 칩
+  const dates = [...new Set(allMessages.map(m => m.date))].sort((a,b) => b.localeCompare(a));
+  const filtersEl = document.getElementById('history-filters');
+  if (dates.length === 0) {
+    filtersEl.innerHTML = '';
+    document.getElementById('history-list').innerHTML =
+      '<div class="history-empty">저장된 기록이 없습니다.</div>';
+    return;
+  }
+
+  if (activeDate && !dates.includes(activeDate)) activeDate = null;
+  if (!activeDate) activeDate = dates[0];
+
+  filtersEl.innerHTML = dates.map(d => `
+    <div class="date-chip ${d === activeDate ? 'active' : ''}"
+      onclick="setActiveDate('${d}')">${formatDateChip(d)}</div>
+  `).join('');
+
+  const list = document.getElementById('history-list');
+  const filtered = allMessages.filter(m => m.date === activeDate);
+  if (!filtered.length) {
+    list.innerHTML = '<div class="history-empty">이 날짜의 기록이 없습니다.</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(m => `
+    <div class="history-item fade" id="hi-${m.id}">
+      <div style="flex:1">
+        <div class="history-text">${escHtml(m.text)}</div>
+      </div>
+      <div class="history-meta">
+        <div class="history-time">${formatTime(m.createdAt)}</div>
+        <button class="btn btn-danger btn-sm" style="margin-top:8px" onclick="deleteMessage('${m.id}')">삭제</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setActiveDate(date) {
+  activeDate = date;
+  renderHistory();
+}
+
+function formatDateChip(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  return `${m}/${d}`;
+}
+
+function formatTime(iso) {
+  const d = new Date(iso);
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+async function deleteMessage(id) {
+  try {
+    await fetch(`${API_BASE}/message/${id}`, { method: 'DELETE' });
+    allMessages = allMessages.filter(m => m.id !== id);
+    renderHistory();
+  } catch {}
+}
+
+// ══════════════════════════════════════════
+// TODOS
+// ══════════════════════════════════════════
+let todos = [];
+
+function renderTodos(list) {
+  todos = list;
+  const ul = document.getElementById('todo-list');
+  if (!list.length) {
+    ul.innerHTML = '<div class="todo-empty">오늘의 목표를 입력해보세요.</div>';
+  } else {
+    ul.innerHTML = list.map(t => `
+      <li class="todo-item ${t.done ? 'done' : ''}">
+        <div class="todo-check ${t.done ? 'done' : ''}" onclick="toggleTodo('${t.id}')"></div>
+        <span class="todo-text">${escHtml(t.text)}</span>
+        <button class="todo-del" onclick="deleteTodo('${t.id}')">×</button>
+      </li>`).join('');
+  }
+  const done = list.filter(t => t.done).length;
+  const total = list.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('todo-stat').textContent = `${done} / ${total}`;
+  document.getElementById('todo-pct').textContent = `${pct}%`;
+  document.getElementById('todo-progress').style.width = `${pct}%`;
+}
+
+async function addTodo() {
+  const input = document.getElementById('todo-input');
+  const text = input.value.trim();
+  if (!text) return;
+  try {
+    const r = await fetch(`${API_BASE}/todos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    const todo = await r.json();
+    todos.push(todo);
+  } catch {
+    todos.push({ id: Date.now().toString(), text, done: false, createdAt: new Date().toISOString() });
+  }
+  renderTodos(todos);
+  input.value = '';
+}
+
+async function toggleTodo(id) {
+  try {
+    const r = await fetch(`${API_BASE}/todos/${id}`, { method: 'PATCH' });
+    const updated = await r.json();
+    todos = todos.map(t => t.id === id ? updated : t);
+  } catch {
+    todos = todos.map(t => t.id === id ? { ...t, done: !t.done } : t);
+  }
+  renderTodos(todos);
+}
+
+async function deleteTodo(id) {
+  try { await fetch(`${API_BASE}/todos/${id}`, { method: 'DELETE' }); } catch {}
+  todos = todos.filter(t => t.id !== id);
+  renderTodos(todos);
+}
+
+// ══════════════════════════════════════════
+// QUOTE — korean-advice-open-api
+// GET https://korean-advice-open-api.vercel.app/api/advice
+// 응답: { message: string, author: string }
+// 참조: https://github.com/gwongibeom/korean-advice-open-api
+// ══════════════════════════════════════════
+async function loadQuote() {
+  document.getElementById('quote-wrap').innerHTML =
+    '<div class="loader"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>명언을 불러오는 중</div>';
+  try {
+    const res = await fetch('https://korean-advice-open-api.vercel.app/api/advice');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const q = await res.json();
+    // q.message = 명언 본문  |  q.author = 저자명
+    document.getElementById('quote-wrap').innerHTML =
+      '<div class="fade">' +
+        '<p class="quote-text"><span class="quote-hl">"</span>' + escHtml(q.message) + '<span class="quote-hl">"</span></p>' +
+        '<div class="quote-attrib">' +
+          '<div><div class="quote-author">' + escHtml(q.author) + '</div></div>' +
+          '<div class="quote-src">korean-advice-open-api</div>' +
+        '</div>' +
+      '</div>';
+  } catch(e) {
+    console.warn('명언 API 오류:', e);
+    document.getElementById('quote-wrap').innerHTML =
+      '<div class="fade">' +
+        '<p class="quote-text"><span class="quote-hl">"</span>당신이 할 수 있다고 생각하든, 할 수 없다고 생각하든, 당신은 옳다.<span class="quote-hl">"</span></p>' +
+        '<div class="quote-attrib">' +
+          '<div><div class="quote-author">Henry Ford</div></div>' +
+          '<div class="quote-src">네트워크 오류 — 잠시 후 다시 시도해주세요</div>' +
+        '</div>' +
+      '</div>';
+  }
+}
+
+// ══════════════════════════════════════════
+// CLAUDE RECOMMENDATIONS
+// ══════════════════════════════════════════
+async function loadRec() {
+  const today = new Date();
+  const ds = `${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일`;
+  try {
+    const json = await claudeCall(`오늘(${ds}) 자기계발을 위한 실천 가능한 추천 3가지를 제안해주세요.
+반드시 아래 JSON 형식으로만 응답 (markdown 없이):
+{"items":[{"emoji":"이모지","title":"카테고리명","body":"추천 내용 2문장"}],"date":"${ds}"}`);
+    const rec = JSON.parse(json);
+    document.getElementById('rec-wrap').innerHTML = `
+      <div class="fade">
+        <div class="rec-grid">
+          ${rec.items.map(i => `
+            <div class="rec-card">
+              <span class="rec-emoji">${i.emoji}</span>
+              <div class="rec-title">${escHtml(i.title)}</div>
+              <div class="rec-body">${escHtml(i.body)}</div>
+            </div>`).join('')}
+        </div>
+        <div class="rec-footer">
+          <span class="rec-ts">${escHtml(rec.date)} 생성</span>
+          <button class="btn btn-ghost btn-sm" onclick="loadRec()">↺ 새 추천</button>
+        </div>
+      </div>`;
+  } catch {
+    document.getElementById('rec-wrap').innerHTML = `
+      <div class="fade">
+        <div class="rec-grid">
+          <div class="rec-card"><span class="rec-emoji">📖</span><div class="rec-title">독서</div><div class="rec-body">오늘 20분, 관심 분야 책 한 챕터. 작은 습관이 복리로 성장합니다.</div></div>
+          <div class="rec-card"><span class="rec-emoji">🧘</span><div class="rec-title">마음챙김</div><div class="rec-body">5분 호흡 명상. 생각의 소음을 줄이고 지금 이 순간에 집중하세요.</div></div>
+          <div class="rec-card"><span class="rec-emoji">✍️</span><div class="rec-title">저널링</div><div class="rec-body">오늘 배운 것, 감사한 것 3가지. 자기 성찰의 시작은 글쓰기입니다.</div></div>
+        </div>
+        <div class="rec-footer">
+          <span class="rec-ts">기본 추천 (API 키 설정 필요)</span>
+          <button class="btn btn-ghost btn-sm" onclick="loadRec()">↺ 새 추천</button>
+        </div>
+      </div>`;
+  }
+}
+
+// ── Util ──
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Init ──
+loadData();
+loadQuote();
+loadRec();
+</script>
+</body>
+</html>
